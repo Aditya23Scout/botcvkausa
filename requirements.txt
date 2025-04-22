@@ -1,0 +1,6 @@
+aiogram==3.2.0
+aiohttp
+zipfile36
+flask
+rarfile
+pytz
