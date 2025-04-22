@@ -1,7 +1,7 @@
+import subprocess
 import os
 import math
 import zipfile
-import rarfile
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import FSInputFile
 from aiogram.filters import CommandStart
@@ -16,9 +16,7 @@ from aiogram.types import Message
 from datetime import datetime
 import pytz
 
-
 ADMIN_ID = 1278825209
-
 bot = Bot(token="7370579381:AAGi4k0TJr27Gau3Qai8_VxMuhSsUNSAcR0")
 dp = Dispatcher(storage=MemoryStorage())
 
@@ -105,7 +103,7 @@ async def handle_file_mode(message: Message, state: FSMContext):
     await state.set_state(Form.waiting_for_txt_file)
 
 @dp.message(Form.waiting_for_txt_file, F.document.file_name.endswith((".txt", ".zip", ".rar")))
-async def handle_file(message: types.Message, state: FSMContext):
+async def handle_file(message: Message, state: FSMContext):
     file_id = message.document.file_id
     file = await bot.get_file(file_id)
     os.makedirs("downloads", exist_ok=True)
@@ -113,7 +111,6 @@ async def handle_file(message: types.Message, state: FSMContext):
     await bot.download_file(file.file_path, temp_path)
 
     combined_txt_path = f"downloads/{uuid4()}_combined.txt"
-
     extract_path = f"downloads/extracted_{uuid4()}"
     os.makedirs(extract_path, exist_ok=True)
 
@@ -123,10 +120,15 @@ async def handle_file(message: types.Message, state: FSMContext):
 
     elif temp_path.endswith(".rar"):
         try:
-            with rarfile.RarFile(temp_path) as rar:
-                rar.extractall(path=extract_path)
+            result = subprocess.run(
+                ["unrar", "x", "-y", temp_path, extract_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            if result.returncode != 0:
+                raise Exception(result.stderr.decode())
         except Exception as e:
-            await message.answer(f"Gagal mengekstrak file RAR: {e}")
+            await message.answer(f"Gagal mengekstrak file RAR. Pastikan `unrar` sudah terinstal.\nError: {e}")
             return
 
     if temp_path.endswith((".zip", ".rar")):
