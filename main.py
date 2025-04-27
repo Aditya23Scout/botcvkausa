@@ -16,8 +16,8 @@ from aiogram.types import Message
 from datetime import datetime
 import pytz
 
-ADMIN_ID = 1278825209
-bot = Bot(token="7370579381:AAFG8R2za07nA-xzuYei-IFBjEuFnYIxUwQ")
+ADMIN_ID = 
+bot = Bot(token="")
 dp = Dispatcher(storage=MemoryStorage())
 
 class Form(StatesGroup):
