@@ -17,7 +17,7 @@ from datetime import datetime
 import pytz
 
 ADMIN_ID = 1278825209
-bot = Bot(token="7370579381:AAGi4k0TJr27Gau3Qai8_VxMuhSsUNSAcR0")
+bot = Bot(token="7370579381:AAFG8R2za07nA-xzuYei-IFBjEuFnYIxUwQ")
 dp = Dispatcher(storage=MemoryStorage())
 
 class Form(StatesGroup):
